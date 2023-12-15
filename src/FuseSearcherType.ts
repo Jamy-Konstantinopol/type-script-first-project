@@ -9,6 +9,11 @@ export class FuseSearcher implements BaseSearcher<FuseResult<unknown>>
 	private _fuse: Fuse<IndexData>;
 
 	public init(datas: any[]) {
+
+		datas.forEach(element => {
+			this._indexes.push(element);
+		});
+
 		this._indexes = datas;
 		this._fuse = new Fuse(this._indexes, { keys: ["link", "title", "body"] });
 	}

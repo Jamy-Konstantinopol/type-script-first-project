@@ -13,13 +13,13 @@ export class Searcher
 
 	private _init(datas : any[])
 	{
-		let indexes = [];
+		let indexes : IndexData[] = [];
 
 		datas.forEach(element => {
-			
+			indexes.push(element);
 		});
 
-		return datas;
+		return indexes;
 	}
 
     public search<T>(query : string, searcherTypeClass : BaseSearcher<T>) : T[]
