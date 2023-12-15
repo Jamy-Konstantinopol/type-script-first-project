@@ -1,9 +1,9 @@
 import lunr from "lunr";
-import { IBaseSearcherType } from "./IBaseSearcherType";
+import { BaseSearcher } from "./BaseSearcherType";
 import customPipeline from "./customPipeline";
 import tokenizer from "./tokenizer";
 
-export class LunrSearcherType implements IBaseSearcherType<lunr.Index.Result>
+export class LunrSearcher implements BaseSearcher<lunr.Index.Result>
 {
 	private _indexes: lunr.Index;
 

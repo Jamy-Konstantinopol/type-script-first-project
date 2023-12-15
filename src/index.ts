@@ -1,13 +1,13 @@
 import {Searcher} from "./Searcher"
-import { LunrSearcherType } from "./LunrSearcherType";
-import { FuseSearcherType } from "./FuseSearcherType";
+import { LunrSearcher } from "./LunrSearcherType";
+import { FuseSearcher } from "./FuseSearcherType";
 import text from "./text.json"
 
 const searcher = new Searcher(text);
-const fuseSearcher = new FuseSearcherType();
+const fuseSearcher = new FuseSearcher();
 const fuseResult = searcher.search("ekbwf", fuseSearcher);
 
-const lunrSearcher = new LunrSearcherType();
+const lunrSearcher = new LunrSearcher();
 const lunrResult = searcher.search("ekbwf", lunrSearcher);
 
 console.log(fuseResult);

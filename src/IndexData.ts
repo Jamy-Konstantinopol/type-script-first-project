@@ -1,5 +1,5 @@
 
-export interface IIndexData {
+export interface IndexData {
 	link: string;
 	title: string;
 	body: string;

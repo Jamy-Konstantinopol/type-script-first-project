@@ -1,10 +1,10 @@
 import { StringRewriter } from "./StringRewriter";
-import { IBaseSearcherType } from "./IBaseSearcherType";
-import { IIndexData } from "./IIndexData";
+import { BaseSearcher } from "./BaseSearcherType";
+import { IndexData } from "./IndexData";
 
 export class Searcher
 {
-    private _indexes: IIndexData[];
+    private _indexes: IndexData[];
 	
 	constructor(datas : any[])
 	{
@@ -13,10 +13,16 @@ export class Searcher
 
 	private _init(datas : any[])
 	{
+		let indexes = [];
+
+		datas.forEach(element => {
+			
+		});
+
 		return datas;
 	}
 
-    public search<T>(query : string, searcherTypeClass : IBaseSearcherType<T>) : T[]
+    public search<T>(query : string, searcherTypeClass : BaseSearcher<T>) : T[]
     {
 		searcherTypeClass.init(this._indexes);
 
