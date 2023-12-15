@@ -86,7 +86,7 @@ export class FuseSearcher implements IBaseSearcher
 		this._fuse = new Fuse(this._indexes, {keys: ["link", "title", "body"]});
 	}
 
-	public search(query : string) : any[]
+	public search(query : string) : FuseResult<unknown>[]
 	{
 		let result = this._fuse.search(query);
 
