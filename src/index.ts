@@ -2,5 +2,5 @@ import {Searcher} from "./Searcher"
 import text from "./text.json"
 
 const searcher = new Searcher();
-var result = searcher.search(text, "селедка");
+let result = searcher.search(text, "ekbwf");
 console.log(result);

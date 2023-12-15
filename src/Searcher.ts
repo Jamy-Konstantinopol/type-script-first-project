@@ -1,5 +1,6 @@
 import Fuse, { FuseResult } from "fuse.js";
-import CyrillicToTranslit from 'cyrillic-to-translit-js';
+import { StringFixer } from "./StringFixer";
+
 
 interface IndexData
 {
@@ -10,121 +11,37 @@ interface IndexData
 
 export class Searcher
 {
-    private _indexes: IndexData[] = []
-	private _keyboardEnToRu  : { [key:string]:string; } = 
-	{
-		"q": "й",
-		"w": "ц",
-		"e": "у",
-		"r": "к",
-		"t": "е",
-		"y": "н",
-		"u": "г",
-		"i": "ш",
-		"o": "щ",
-		"p": "з",
-		"[": "х",
-		"]": "ъ",
-		"a": "ф",
-		"s": "ы",
-		"d": "в",
-		"f": "а",
-		"g": "п",
-		"h": "р",
-		"j": "о",
-		"k": "л",
-		"l": "д",
-		";": "ж",
-		"'": "э",
-		"z": "я",
-		"x": "ч",
-		"c": "с",
-		"v": "м",
-		"b": "и",
-		"n": "т",
-		"m": "ь",
-		",": "б",
-		".": "ю",
-		"/": ".",
-	}
+    private _indexes: IndexData[] = [];
 
-	private _keyboardRuToEn : { [key:string]:string; } = 
-	{
-		"й": "q",
-		"ц": "w",
-		"у": "e",
-		"к": "r",
-		"е": "t",
-		"н": "y",
-		"г": "u",
-		"ш": "i",
-		"щ": "o",
-		"з": "p",
-		"х": "[",
-		"ъ": "]",
-		"ф": "a",
-		"ы": "s",
-		"в": "d",
-		"а": "f",
-		"п": "g",
-		"р": "h",
-		"о": "j",
-		"л": "k",
-		"д": "l",
-		"ж": ";",
-		"э": "'",
-		"я": "z",
-		"ч": "x",
-		"с": "c",
-		"м": "v",
-		"и": "b",
-		"т": "n",
-		"ь": "m",
-		"б": ",",
-		"ю": ".",
-		".": "/",
-	}
 
 	private _init(datas : any[])
 	{
 		this._indexes = datas;
 	}
 
+	/**
+   	* Делает поисковый запрос:
+   	* @param datas - Файл, в котором производится поиск
+   	* @param query - Строка, с помощью которого осуществляется поиск
+   	* @returns Массив, состоящий из результата поиска
+   	*/
     public search(datas : any[], query : string) : FuseResult<unknown>[]
     {
-		this._init(datas);
 		query = query.toLowerCase();
 
+		this._init(datas);
+
+		let stringFixer = new StringFixer();
 		let fuse = new Fuse(this._indexes, {keys: ["link", "title", "body"]});
-		
 		let result = fuse.search(query);
 
 		if(result.length > 0)
 		{
 			return result;
 		}
+		
+		let wrongLayoutQuery = stringFixer.fixKeyboardLayout(query);
 
-		let wrongLayoutQuery = "";
-
-		for(let i = 0; i < query.length; i++)
-		{
-			let letter : string= query[i];
-			
-			let char = this._keyboardRuToEn[letter];
-			if(char != undefined)
-			{
-				wrongLayoutQuery += char;
-				continue;
-			}
-
-			char = this._keyboardEnToRu[letter];
-			if(char != undefined)
-			{
-				wrongLayoutQuery += char;
-				continue;
-			}
-			wrongLayoutQuery += query[i];
-		}
 		result = fuse.search(wrongLayoutQuery);
 
 		if(result.length > 0)
@@ -132,15 +49,14 @@ export class Searcher
 			return result;
 		}
 
-		const transiter = CyrillicToTranslit({preset: 'uk'});
-		result = fuse.search(transiter.transform(query));
+		result = fuse.search(stringFixer.changeRussianToEngilshTranslirization(query));
 
 		if(result.length > 0)
 		{
 			return result;
 		}
 
-		result = fuse.search(transiter.reverse(query));
+		result = fuse.search(stringFixer.changeEngilshToRussianTranslirization(query));
 		
 		return result;
     }
