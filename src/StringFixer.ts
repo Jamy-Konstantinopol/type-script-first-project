@@ -2,7 +2,7 @@ import CyrillicToTranslit from 'cyrillic-to-translit-js';
 
 export class StringFixer
 {
-    private _keyboardEnToRu  : { [key:string]:string; } = 
+    private _keyboardEnToRu : { [key:string]:string; } = 
 	{
 		"q": "й",
 		"w": "ц",

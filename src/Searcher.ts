@@ -14,7 +14,7 @@ interface IndexData
 interface IBaseSearcher
 {
 	init(datas : any[]) : void;
-	search(query : string) : FuseResult<unknown>[];
+	search(query : string) : any[];
 }
 
 export class Searcher
@@ -36,17 +36,17 @@ export class Searcher
 
 	/**
    	* Делает поисковый запрос:
-   	* @param datas - Файл, в котором производится поиск
+   	* @param searchType - Файл, в котором производится поиск
    	* @param query - Строка, с помощью которого осуществляется поиск
    	* @returns Массив, состоящий из результата поиска
    	*/
-    public search(query : string, searchType : IBaseSearcher) : FuseResult<unknown>[]
+    public search(query : string, searchType : IBaseSearcher) : any[]
     {
 		searchType.init(this._indexes);
 
 		query = query.toLowerCase();
 		let stringFixer = new StringFixer();
-		let result = searchType.search(query)
+		let result = searchType.search(query);
 
 		if(result.length > 0)
 		{
@@ -78,16 +78,17 @@ export class Searcher
 export class FuseSearcher implements IBaseSearcher
 {
 	private _indexes: IndexData[] = [];
+	private _fuse : Fuse<IndexData>;
 
 	public init(datas : any[])
 	{
 		this._indexes = datas;
+		this._fuse = new Fuse(this._indexes, {keys: ["link", "title", "body"]});
 	}
 
-	public search(query : string) : FuseResult<unknown>[]
+	public search(query : string) : any[]
 	{
-		let fuse = new Fuse(this._indexes, {keys: ["link", "title", "body"]});
-		let result = fuse.search(query);
+		let result = this._fuse.search(query);
 
 		return result;
 	}
