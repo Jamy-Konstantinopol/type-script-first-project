@@ -1,0 +1,57 @@
+{
+  "name": "typescript-template",
+  "version": "1.0.7",
+  "description": "A complete Node.js project template using TypeScript and following general best practices.",
+  "keywords": [
+    "typescript",
+    "template"
+  ],
+  "author": {
+    "name": "Chris Wells",
+    "url": "https://chriswells.io"
+  },
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chriswells0/node-typescript-template.git"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "npm run clean && npm run lint && tsc"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.5",
+    "@types/lunr": "^2.3.7",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.4.1",
+    "@typescript-eslint/eslint-plugin": "^5.61.0",
+    "@typescript-eslint/parser": "^5.61.0",
+    "chai": "^4.3.7",
+    "conventional-changelog-cli": "^3.0.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.44.0",
+    "mocha": "^10.2.0",
+    "nodemon": "^3.0.1",
+    "nyc": "^15.1.0",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.1.6"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "dependencies": {
+    "cyrillic-to-translit-js": "^3.2.1",
+    "fuse.js": "^7.0.0",
+    "lunr": "^2.3.9",
+    "sitka": "^1.1.1",
+    "transliteration": "^2.3.5"
+  }
+}
