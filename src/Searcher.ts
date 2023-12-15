@@ -1,5 +1,7 @@
 import Fuse, { FuseResult } from "fuse.js";
 import { StringFixer } from "./StringFixer";
+import { callbackify } from "util";
+import { serialize } from "v8";
 
 
 interface IndexData
@@ -9,14 +11,27 @@ interface IndexData
 	body: string;
 }
 
+interface IBaseSearcher
+{
+	init(datas : any[]) : void;
+	search(query : string) : FuseResult<unknown>[];
+}
+
 export class Searcher
 {
-    private _indexes: IndexData[] = [];
-
+    private _indexes: IndexData[];
+	
+	/**Класс, который содержит метод, осуществляющий поиск
+   	* @param datas - Файл, в котором производится поиск
+   	*/
+	constructor(datas : any[])
+	{
+		this._indexes = this._init(datas);
+	}
 
 	private _init(datas : any[])
 	{
-		this._indexes = datas;
+		return datas;
 	}
 
 	/**
@@ -25,15 +40,13 @@ export class Searcher
    	* @param query - Строка, с помощью которого осуществляется поиск
    	* @returns Массив, состоящий из результата поиска
    	*/
-    public search(datas : any[], query : string) : FuseResult<unknown>[]
+    public search(query : string, searchType : IBaseSearcher) : FuseResult<unknown>[]
     {
+		searchType.init(this._indexes);
+
 		query = query.toLowerCase();
-
-		this._init(datas);
-
 		let stringFixer = new StringFixer();
-		let fuse = new Fuse(this._indexes, {keys: ["link", "title", "body"]});
-		let result = fuse.search(query);
+		let result = searchType.search(query)
 
 		if(result.length > 0)
 		{
@@ -42,22 +55,40 @@ export class Searcher
 		
 		let wrongLayoutQuery = stringFixer.fixKeyboardLayout(query);
 
-		result = fuse.search(wrongLayoutQuery);
+		result = searchType.search(wrongLayoutQuery)
 
 		if(result.length > 0)
 		{
 			return result;
 		}
 
-		result = fuse.search(stringFixer.changeRussianToEngilshTranslirization(query));
+		result = searchType.search(stringFixer.changeRussianToEngilshTranslirization(query));
 
 		if(result.length > 0)
 		{
 			return result;
 		}
 
-		result = fuse.search(stringFixer.changeEngilshToRussianTranslirization(query));
+		result = result = searchType.search(stringFixer.changeEngilshToRussianTranslirization(query));
 		
 		return result;
     }
+}
+
+export class FuseSearcher implements IBaseSearcher
+{
+	private _indexes: IndexData[] = [];
+
+	public init(datas : any[])
+	{
+		this._indexes = datas;
+	}
+
+	public search(query : string) : FuseResult<unknown>[]
+	{
+		let fuse = new Fuse(this._indexes, {keys: ["link", "title", "body"]});
+		let result = fuse.search(query);
+
+		return result;
+	}
 }

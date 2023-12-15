@@ -1,6 +1,8 @@
-import {Searcher} from "./Searcher"
+import {Searcher, FuseSearcher} from "./Searcher"
 import text from "./text.json"
 
-const searcher = new Searcher();
-let result = searcher.search(text, "ekbwf");
+const searcher = new Searcher(text);
+const fuseSearcher = new FuseSearcher();
+let result = searcher.search("ekbwf", fuseSearcher);
+
 console.log(result);
