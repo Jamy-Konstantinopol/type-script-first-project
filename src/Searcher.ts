@@ -1,11 +1,10 @@
 import Fuse, { FuseResult } from "fuse.js";
 import { StringRewriter } from "./StringRewriter";
 import tokenizer from "./tokenizer";
-import customPipeline from "./custorPipeline";
+import customPipeline from "./customPipeline";
 import lunr from "lunr";
 
-
-interface IndexData
+interface IIndexData
 {
 	link: string;
 	title: string;
@@ -15,16 +14,13 @@ interface IndexData
 interface IBaseSearcherType<T>
 {
 	init(datas : any[]) : void;
-	search<T>(query : string) : T[];
+	search(query : string) : T[];
 }
 
 export class Searcher
 {
-    private _indexes: IndexData[];
+    private _indexes: IIndexData[];
 	
-	/**Класс, который содержит метод, осуществляющий поиск
-   	* @param datas - Файл, в котором производится поиск
-   	*/
 	constructor(datas : any[])
 	{
 		this._indexes = this._init(datas);
@@ -35,19 +31,13 @@ export class Searcher
 		return datas;
 	}
 
-	/**
-   	* Делает поисковый запрос:
-   	* @param searcherTypeClass - Файл, в котором производится поиск
-   	* @param query - Строка, с помощью которого осуществляется поиск
-   	* @returns Массив, состоящий из результата поиска
-   	*/
     public search<T>(query : string, searcherTypeClass : IBaseSearcherType<T>) : T[]
     {
 		searcherTypeClass.init(this._indexes);
 
 		query = query.toLowerCase();
 		let stringFixer = new StringRewriter();
-		let result = searcherTypeClass.search<T>(query);
+		let result = searcherTypeClass.search(query);
 
 		if(result.length > 0)
 		{
@@ -56,21 +46,21 @@ export class Searcher
 		
 		let wrongLayoutQuery = stringFixer.fixKeyboardLayout(query);
 
-		result = searcherTypeClass.search<T>(wrongLayoutQuery)
+		result = searcherTypeClass.search(wrongLayoutQuery)
 
 		if(result.length > 0)
 		{
 			return result;
 		}
 
-		result = searcherTypeClass.search<T>(stringFixer.changeRussianToEngilshTranslirization(query));
+		result = searcherTypeClass.search(stringFixer.changeRussianToEngilshTranslirization(query));
 
 		if(result.length > 0)
 		{
 			return result;
 		}
 
-		result = result = searcherTypeClass.search<T>(stringFixer.changeEngilshToRussianTranslirization(query));
+		result = result = searcherTypeClass.search(stringFixer.changeEngilshToRussianTranslirization(query));
 		
 		return result;
     }
@@ -78,8 +68,8 @@ export class Searcher
 
 export class FuseSearcherType implements IBaseSearcherType<FuseResult<unknown>>
 {
-	private _indexes: IndexData[] = [];
-	private _fuse : Fuse<IndexData>;
+	private _indexes: IIndexData[] = [];
+	private _fuse : Fuse<IIndexData>;
 
 	public init(datas : any[])
 	{
@@ -87,7 +77,7 @@ export class FuseSearcherType implements IBaseSearcherType<FuseResult<unknown>>
 		this._fuse = new Fuse(this._indexes, {keys: ["link", "title", "body"]});
 	}
 
-	public search(query : string) : any[]
+	public search(query : string) : FuseResult<IIndexData>[]
 	{
 		let result = this._fuse.search(query);
 
@@ -95,20 +85,14 @@ export class FuseSearcherType implements IBaseSearcherType<FuseResult<unknown>>
 	}
 }
 
-export class LunrSearcherType implements IBaseSearcherType<lunr.Index>
+export class LunrSearcherType implements IBaseSearcherType<lunr.Index.Result>
 {
-	private _indexes : IndexData[] = [];
-	private _fuse : Fuse<IndexData>;
+	private _indexes : lunr.Index;
 
 	public init(datas : any[])
 	{
-		this._indexes = datas;
-	}
-
-	public search(query : string) : any[]
-	{
-		const indexes = this._indexes;
-		const result = lunr(function () {
+		this._indexes = lunr(function () {
+			this.ref("link");
 			this.field("link");
 			this.field("title");
 			this.field("body");
@@ -126,11 +110,14 @@ export class LunrSearcherType implements IBaseSearcherType<lunr.Index>
 			this.searchPipeline.remove(lunr.stemmer);
 
 			this.metadataWhitelist = ["position"];
-			Array.from(indexes).forEach((res) => {
-				this.add(res);
+			Array.from(datas).forEach((data) => {
+				this.add(data);
 			});
 		});
-		
-		return result.search(query);
+	}
+
+	public search(query : string) : lunr.Index.Result[]
+	{		
+		return this._indexes.search(query);
 	}
 }

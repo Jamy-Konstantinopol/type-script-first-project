@@ -5,7 +5,7 @@ const searcher = new Searcher(text);
 const fuseSearcher = new FuseSearcherType();
 const fuseResult = searcher.search("ekbwf", fuseSearcher);
 
-const lunrSearcher = new FuseSearcherType();
+const lunrSearcher = new LunrSearcherType();
 const lunrResult = searcher.search("ekbwf", lunrSearcher);
 
 console.log(fuseResult);
