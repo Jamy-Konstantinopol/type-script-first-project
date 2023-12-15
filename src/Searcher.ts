@@ -1,31 +1,11 @@
 import { StringRewriter } from "./StringRewriter";
-import { BaseSearcher } from "./BaseSearcherType";
+import { BaseSearcher } from "./BaseSearcher";
 import { IndexData } from "./IndexData";
 
 export class Searcher
 {
-    private _indexes: IndexData[];
-	
-	constructor(datas : any[])
-	{
-		this._indexes = this._init(datas);
-	}
-
-	private _init(datas : any[])
-	{
-		let indexes : IndexData[] = [];
-
-		datas.forEach(element => {
-			indexes.push(element);
-		});
-
-		return indexes;
-	}
-
     public search<T>(query : string, searcherTypeClass : BaseSearcher<T>) : T[]
     {
-		searcherTypeClass.init(this._indexes);
-
 		query = query.toLowerCase();
 		let stringFixer = new StringRewriter();
 		let result = searcherTypeClass.search(query);

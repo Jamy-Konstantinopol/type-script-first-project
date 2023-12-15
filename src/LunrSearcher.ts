@@ -1,5 +1,5 @@
 import lunr from "lunr";
-import { BaseSearcher } from "./BaseSearcherType";
+import { BaseSearcher } from "./BaseSearcher";
 import customPipeline from "./customPipeline";
 import tokenizer from "./tokenizer";
 
@@ -7,8 +7,13 @@ export class LunrSearcher implements BaseSearcher<lunr.Index.Result>
 {
 	private _indexes: lunr.Index;
 
-	public init(datas: any[]) {
-		this._indexes = lunr(function () {
+	constructor(datas: any[])
+	{
+		this._indexes = this._initIndexes(datas);
+	}
+
+	private _initIndexes(datas: any[]) {
+		const indexes : lunr.Index = lunr(function () {
 			this.ref("link");
 			this.field("link");
 			this.field("title");
@@ -31,6 +36,8 @@ export class LunrSearcher implements BaseSearcher<lunr.Index.Result>
 				this.add(data);
 			});
 		});
+
+		return indexes;
 	}
 
 	public search(query: string): lunr.Index.Result[] {

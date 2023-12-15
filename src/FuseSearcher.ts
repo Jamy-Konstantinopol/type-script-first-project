@@ -1,5 +1,5 @@
 import Fuse, { FuseResult } from "fuse.js";
-import { BaseSearcher } from "./BaseSearcherType";
+import { BaseSearcher } from "./BaseSearcher";
 import { IndexData } from "./IndexData";
 
 
@@ -8,17 +8,20 @@ export class FuseSearcher implements BaseSearcher<FuseResult<unknown>>
 	private _indexes: IndexData[] = [];
 	private _fuse: Fuse<IndexData>;
 
-	public init(datas: any[]) {
-
-		datas.forEach(element => {
-			this._indexes.push(element);
-		});
-
-		this._indexes = datas;
+	constructor(datas : any[])
+	{
+		this._indexes = this._initIndexes(datas);
 		this._fuse = new Fuse(this._indexes, { keys: ["link", "title", "body"] });
 	}
 
-	public search(query: string): FuseResult<IndexData>[] {
+	private _initIndexes(datas: any[])
+	{
+		const indexes = [...datas];
+		return indexes;
+	}
+
+	public search(query: string): FuseResult<IndexData>[]
+	{
 		let result = this._fuse.search(query);
 
 		return result;
