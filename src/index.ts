@@ -1,4 +1,6 @@
-import {Searcher, FuseSearcherType, LunrSearcherType} from "./Searcher"
+import {Searcher} from "./Searcher"
+import { LunrSearcherType } from "./LunrSearcherType";
+import { FuseSearcherType } from "./FuseSearcherType";
 import text from "./text.json"
 
 const searcher = new Searcher(text);
