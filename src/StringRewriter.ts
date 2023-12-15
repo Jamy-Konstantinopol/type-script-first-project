@@ -1,6 +1,6 @@
 import CyrillicToTranslit from 'cyrillic-to-translit-js';
 
-export class StringFixer
+export class StringRewriter
 {
     private _keyboardEnToRu : { [key:string]:string; } = 
 	{
