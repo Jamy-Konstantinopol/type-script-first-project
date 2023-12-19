@@ -1,10 +1,8 @@
-import CyrillicToTranslit from 'cyrillic-to-translit-js';
+import CyrillicToTranslit from "cyrillic-to-translit-js";
 
-export class StringRewriter
-{
-    private static _keyboardEnToRu = 
-	new Map<string, string>(
-		[["q", "й"],
+export class StringRewriter {
+	private static _keyboardEnToRu = new Map<string, string>([
+		["q", "й"],
 		["w", "ц"],
 		["e", "у"],
 		["r", "к"],
@@ -36,12 +34,11 @@ export class StringRewriter
 		["m", "ь"],
 		[",", "б"],
 		[".", "ю"],
-		["/", "."]]
-	);
+		["/", "."],
+	]);
 
-	private static _keyboardRuToEn = 
-	new Map<string, string>(
-		[["й", "q"],
+	private static _keyboardRuToEn = new Map<string, string>([
+		["й", "q"],
 		["ц", "w"],
 		["у", "e"],
 		["к", "r"],
@@ -73,32 +70,36 @@ export class StringRewriter
 		["ь", "m"],
 		["б", ","],
 		["ю", "."],
-		[".", "/"]],
-);
+		[".", "/"],
+	]);
 
-    public static fixKeyboardLayout(stringToFix: string)
-    {
+	public static fixKeyboardLayout(stringToFix: string) {
 		let wrongLayoutQuery: string = "";
 
 		for (let i = 0; i < stringToFix.length; i++) {
 			let letter: string = stringToFix[i];
-			let char = this._keyboardRuToEn.get(letter)|| this._keyboardEnToRu.get(letter)|| letter;
+			let char =
+				this._keyboardRuToEn.get(letter) ||
+				this._keyboardEnToRu.get(letter) ||
+				letter;
 
 			wrongLayoutQuery += char;
 		}
 		return wrongLayoutQuery;
 	}
 
-    public static changeRussianToEngilshTranslirization(stringToFix: string) : string
-    {
-        const transiter = CyrillicToTranslit({preset: 'mn'});
+	public static changeRussianToEngilshTranslirization(
+		stringToFix: string
+	): string {
+		const transiter = CyrillicToTranslit({ preset: "mn" });
 
 		return transiter.transform(stringToFix);
 	}
 
-    public static changeEngilshToRussianTranslirization(stringToFix: string) : string
-    {
-        const transiter = CyrillicToTranslit({preset: 'uk'});
+	public static changeEngilshToRussianTranslirization(
+		stringToFix: string
+	): string {
+		const transiter = CyrillicToTranslit({ preset: "uk" });
 
 		return transiter.reverse(stringToFix);
 	}

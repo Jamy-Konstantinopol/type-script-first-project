@@ -3,17 +3,15 @@ import { BaseSearcher } from "./BaseSearcher";
 import customPipeline from "./customPipeline";
 import tokenizer from "./tokenizer";
 
-export class LunrSearcher implements BaseSearcher<lunr.Index.Result>
-{
+export class LunrSearcher implements BaseSearcher<lunr.Index.Result> {
 	private _indexes: lunr.Index;
 
-	constructor(datas: any[])
-	{
+	constructor(datas: any[]) {
 		this._indexes = this._initIndexes(datas);
 	}
 
 	private _initIndexes(datas: any[]) {
-		const indexes : lunr.Index = lunr(function () {
+		const indexes: lunr.Index = lunr(function () {
 			this.ref("link");
 			this.field("link");
 			this.field("title");

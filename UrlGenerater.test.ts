@@ -1,20 +1,26 @@
-import { UrlConverter } from './src/UrlConverter';
+import { UrlConverter } from "./src/UrlConverter";
 
-describe('UrlConverter', () => {
-    it("Пробелы и знаки препинания заменяются на дефис, повторяющиеся заменяются на один", () => {
-        let urlConverter = new UrlConverter();
-        let result = urlConverter.convertToUrl("ПРивет, меня ^&)&)(&(&)!@%*&#)зовут");
+describe("UrlConverter", () => {
+	it("Меняются на строчные", () => {
+		let urlConverter = new UrlConverter();
+		let result = urlConverter.convertToUrl("Privet-MEnya-ZOVut");
 
-        expect(result).toEqual("privet-menya-zovut");
-    });
+		expect(result).toEqual("privet-menya-zovut");
+	});
+
+	it("Tранслитерация", () => {
+		let urlConverter = new UrlConverter();
+		let result = urlConverter.convertToUrl("privet-меня-зовут");
+
+		expect(result).toEqual("privet-menya-zovut");
+	});
+
+	it("Вместо пробелов и знаков препинаний ставится дефис, несколько дефисов заменяются на один", () => {
+		let urlConverter = new UrlConverter();
+		let result = urlConverter.convertToUrl(
+			"привет, ?*... ,, меня  ()%:?%?:%?:%зовут12"
+		);
+
+		expect(result).toEqual("privet-menya-zovut12");
+	});
 });
-
-// Когда я задаю название статьи, то хочу, чтобы автоматически генерился УРЛ:
-
-// Строчными буквами.
-
-// Вместо пробелов и знаков препинания ставится дефис.
-
-// Если название на русском, то происходит транслитерация.
-
-// Если заголовок меняется, то УРЛ не меняется, чтобы у юзеров не оставались битые ссылки.

@@ -1,6 +1,6 @@
-import {Searcher} from "./Searcher"
+import { Searcher } from "./Searcher";
 import { FuseSearcher } from "./FuseSearcher";
-import text from "./text.json"
+import text from "./text.json";
 import { UrlConverter } from "./UrlConverter";
 
 const searcher = new Searcher();
